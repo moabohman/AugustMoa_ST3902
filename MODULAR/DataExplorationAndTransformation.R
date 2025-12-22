@@ -91,10 +91,40 @@ pchiTest(na.exclude(VerAtt_Vis$Transformed_Area)) # Not adjusted is barely signi
 jbTest(na.exclude(VerAtt_Vis$Transformed_Area)) # - Normal
 shapiro.test(VerAtt_Vis$Transformed_Area) # - Not normal
 
+# -------------------
+# --- NonViolence ---
+# -------------------
+
+hist(VerAtt_Vis$NonViolence)
+# Scew. Not normal.
+
+# --------------------
+# --- NetMigration ---
+# --------------------
+
+hist(VerAtt_Vis$NetMigration)
+# 
+
+
+hist((VerAtt_Vis$NetMigration)^(1/5))
+
+# Transform and re-visualize
+VerAtt_Vis <- VerAtt_Vis %>% 
+  mutate(Trans_NetMigration = (NetMigration)^(1/5))
+hist(VerAtt_Vis$Trans_NetMigration)
+# Much better! Near normal as well!
+
+# Formal tests
+pchiTest(VerAtt_Vis$Trans_NetMigration) # - Not normal
+pchiTest(na.exclude(VerAtt_Vis$Trans_NetMigration)) # Normal
+jbTest(na.exclude(VerAtt_Vis$Trans_NetMigration)) # - Normal
+shapiro.test(VerAtt_Vis$Trans_NetMigration) # - Normal
+
+
 
 # --- Keep transfomed variables and clean out original ones ---
 
-VerAtt_Vis <- VerAtt_Vis[,!names(VerAtt_Vis) %in% c("GDP","Area")]
+VerAtt_Vis <- VerAtt_Vis[,!names(VerAtt_Vis) %in% c("GDP","Area", "NetMigration")]
 
 
 # Final visualization
@@ -121,6 +151,13 @@ summary(DyaAtt_Vis)
 # -----------------------
 
 hist(DyaAtt_Vis$avg_distance_km)
+summary(DyaAtt_Vis$avg_distance_km)
+# Scew (Big numbers!)
+
+# Transform and re-visualize
+# DyaAtt_Vis <- DyaAtt_Vis %>%
+#   mutate(Transformed_GeoDist = (avg_distance_km)^(2/3))
+# hist((DyaAtt_Vis$avg_distance_km)^(2/3))
 
 
 # -------------------------
@@ -144,18 +181,26 @@ hist(DyaAtt_Vis$reldist_weighted)
 
 
 
+
+# --- Keep transfomed variables and clean out original ones ---
+
+# DyaAtt_Vis <- DyaAtt_Vis[,!names(DyaAtt_Vis) %in% c("avg_distance_km","Area")]
+
+
+
+
 # ============== - Output Variables - =======================
 
 VertexAttributes_Trans <- VerAtt_Vis
 DyadAttributes_Trans <- DyaAtt_Vis
 
 # Variables cleaning - Comment/Uncomment at will
-rm(CommonLanguages)
+# rm()
 
 
 # ~=~=~=~=~=~=~=~=~ Unfinished in this script: ~=~=~=~=~=~=~=~=~
 
 # - Re-cathegorise Language into fewer cathegories
-#     (maybe keep original as well)
+#     (maybe keep original as well) - DONE
 # - Do dyad attributes need to get transformed for any reason?
 

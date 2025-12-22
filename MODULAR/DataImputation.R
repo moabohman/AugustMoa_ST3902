@@ -104,6 +104,8 @@ imp_mice <- mice(VertexAttributes_Imp, m = 5, maxit = 5,
 
 bootmean_ln_GDP <- rowMeans(imp_mice$imp$ln_GDP)
 bootmean_Transformed_Area <- rowMeans(imp_mice$imp$Transformed_Area)
+bootmean_NonViolence <- rowMeans(imp_mice$imp$NonViolence)
+bootmean_Trans_NetMigration <- rowMeans(imp_mice$imp$Trans_NetMigration)
 
 # VertexAttributes_Imp[names(bootmean_ln_GDP),"VertexName"]
 # exp(bootmean_ln_GDP)
@@ -114,6 +116,8 @@ VertexAttributes_Complete <- VertexAttributes_Imp
 
 VertexAttributes_Complete[names(bootmean_ln_GDP),"ln_GDP"] <- bootmean_ln_GDP
 VertexAttributes_Complete[names(bootmean_Transformed_Area),"Transformed_Area"] <- bootmean_Transformed_Area
+VertexAttributes_Complete[names(bootmean_NonViolence),"NonViolence"] <- bootmean_NonViolence
+VertexAttributes_Complete[names(bootmean_Trans_NetMigration),"Trans_NetMigration"] <- bootmean_Trans_NetMigration
 
 
 # ====== - Exploration of complete data  - ================
@@ -180,6 +184,32 @@ pchiTest(VertexAttributes_Complete$Transformed_Area) # - Normal!
 jbTest(VertexAttributes_Complete$Transformed_Area) # - Normal!
 shapiro.test(VertexAttributes_Complete$Transformed_Area)  # - Not normal (but close)
 
+# -------------------
+# --- NonViolence ---
+# -------------------
+
+hist(VerAtt_Vis$NonViolence)
+hist(VertexAttributes_Complete$NonViolence)
+# Rather equal
+
+# --------------------------
+# --- Trans_NetMigration ---
+# --------------------------
+
+hist(VerAtt_Vis$Trans_NetMigration)
+hist(VertexAttributes_Complete$Trans_NetMigration)
+# More scewed...
+
+# Formal tests
+pchiTest(VerAtt_Vis$Trans_NetMigration) # - Not normal
+pchiTest(na.exclude(VerAtt_Vis$Trans_NetMigration)) # Normal
+jbTest(na.exclude(VerAtt_Vis$Trans_NetMigration)) # - Normal
+shapiro.test(VerAtt_Vis$Trans_NetMigration) # - Not normal
+
+pchiTest(VertexAttributes_Complete$Trans_NetMigration) # - Normal
+jbTest(VertexAttributes_Complete$Trans_NetMigration) # - Normal (but lower p-value...)
+shapiro.test(VertexAttributes_Complete$Trans_NetMigration)  # - Normal (but lower p-value...)
+
 
 # --- Keep transfomed variables and clean out original ones ---
 
@@ -221,8 +251,11 @@ DyadAttributes <- DyadAttributes_Trans
 
 # Variables cleaning - Comment/Uncomment at will
 rm(empty_mice, VertexAttributes_Imp, bootmean_ln_GDP, bootmean_Transformed_Area,
-   pred, meth)
+   bootmean_NonViolence, bootmean_Trans_NetMigration, pred, meth, CommonLanguages)
 
+save(AdjMat, file = "AdjMat.RData")
+save(VertexAttributes, file = "VertexAttributes.RData")
+save(DyadAttributes, file = "DyadAttributes.RData")
 
 
 # ~=~=~=~=~=~=~=~=~ Unfinished in this script: ~=~=~=~=~=~=~=~=~

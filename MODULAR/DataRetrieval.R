@@ -2,7 +2,8 @@
 # setwd("~/GitHub/BachelorThesis")
 # setwd("~/GitHub/BachelorThesis/MoasLabbar")
 # setwd("~/GitHub/BachelorThesis/MODULAR/DataRetrieval")
-setwd("~/GitHub/BachelorThesis/MODULAR")
+
+# setwd("~/GitHub/BachelorThesis/MODULAR")
 
 
 # Libraries
@@ -13,6 +14,9 @@ library(haven)
 
 passportISO3 <- read.csv(
   url("https://raw.githubusercontent.com/ilyankou/passport-index-dataset/master/passport-index-matrix-iso3.csv"))
+# tempppp <- read.csv(
+#   url("https://raw.githubusercontent.com/ilyankou/passport-index-dataset/master/passport-index-tidy-iso3.csv"))
+# rm(tempppp)
 rownames(passportISO3) <- passportISO3$Passport
 # Remove first column
 passportISO3 <- passportISO3[,-1]
@@ -41,6 +45,23 @@ AdjMat <- passportISO3
 AdjMat[,] <- 0
 AdjMat[(PassportMat == "visa free")] <- 1
 AdjMat[(PassportMat == "visa on arrival")] <- 1
+# AdjMat[(PassportMat == "10")] <- 1
+# AdjMat[(PassportMat == "120")] <- 1
+# AdjMat[(PassportMat == "14")] <- 1
+# AdjMat[(PassportMat == "15")] <- 1
+# AdjMat[(PassportMat == "150")] <- 1
+# AdjMat[(PassportMat == "180")] <- 1
+# AdjMat[(PassportMat == "21")] <- 1
+# AdjMat[(PassportMat == "240")] <- 1
+# AdjMat[(PassportMat == "28")] <- 1
+# AdjMat[(PassportMat == "30")] <- 1
+# AdjMat[(PassportMat == "31")] <- 1
+# AdjMat[(PassportMat == "360")] <- 1
+# AdjMat[(PassportMat == "42")] <- 1
+# AdjMat[(PassportMat == "45")] <- 1
+# AdjMat[(PassportMat == "60")] <- 1
+# AdjMat[(PassportMat == "7")] <- 1
+# AdjMat[(PassportMat == "90")] <- 1
 
 AdjMat <- as.matrix(AdjMat)
 
@@ -48,12 +69,19 @@ AdjMat <- as.matrix(AdjMat)
 # ----------
 
 # Extract vertex name (Country ISO-3)
-
 VertexName <- row.names(AdjMat)
 
+# Also create a nameFinder for future analysis
+ISO3_Countrynames_Converter <- read_xlsx("DataRetrieval/ISO3_Countrynames_Converter.xlsx")
+VertexName_CountryName <- merge(as.data.frame(VertexName), ISO3_Countrynames_Converter, 
+                          by.x = "VertexName", 
+                          by.y = "ISO3", all.x = TRUE)
+Vertex_RealNames <- VertexName_CountryName[,2]
+rm(ISO3_Countrynames_Converter)
 
 ### Save data
 # write.csv(VertexName,file='PassportCountries.csv')
+# write.csv(VertexName_CountryName,file='VertexName_CountryName.csv')
 
 
  
@@ -151,24 +179,45 @@ colnames(CountrySize_final) <- c("VertexName","Area")
 CountrySize_final <- distinct(CountrySize_final)
 # ----------
 
-# ### QoG - TerrorismIndex and more
-# 
-# # qog_std_cs_jan25 <- read_excel("~/BachelorThesis/MoasLabbar/DataRetrieval/qog_std_cs_jan25.xlsx")
-# qog_std_cs_jan25 <- read_excel("DataRetrieval/qog_std_cs_jan25.xlsx")
+### QoG - TerrorismIndex and more
+
+qog_std_cs_jan25 <- read_excel("DataRetrieval/qog_std_cs_jan25.xlsx")
 # colSums(is.na(qog_std_cs_jan25[,colSums(is.na(qog_std_cs_jan25))==1]))
 # colSums(is.na(qog_std_cs_jan25[,"gti_gti"]))
-# # gpi_conf
-# 
-# QoG_selected <- qog_std_cs_jan25[,names(qog_std_cs_jan25) %in% 
-#                                    c("ccodealp","gti_gti",
-#                                      "ht_region","bmr_dem","gd_ptss",
-#                                      "wbgi_pve", # bättre än terror?
-#                                      "wdi_migration","br_col",
-#                                      "br_dem","bmr_dem")]
-# ### ~~~~ QoG TO BE CONTINUED ~~~~ ###
-# 
-# colnames(QoG_selected) <- c("VertexName","Language")
+# gpi_conf
 
+QoG_selected <- qog_std_cs_jan25[,names(qog_std_cs_jan25) %in%
+                                   c("ccodealp",
+                                    # "gti_gti", # Starkt korrelerad med wbgi_pve (-62)
+                                    # "bmr_dem", # Starkt korrelerad med wbgi_pve (53)
+                                     "wbgi_pve", # Mindre bortfall än gti_gti!
+                                     "wdi_migration"
+                                   )]
+
+QoG_selected$wbgi_pve <- as.numeric(QoG_selected$wbgi_pve)
+QoG_selected$wdi_migration <- as.numeric(QoG_selected$wdi_migration)
+
+QoG_selected <- merge(as.data.frame(VertexName), QoG_selected, 
+                      by.x = "VertexName", 
+                      by.y = "ccodealp", all.x = TRUE)
+
+
+
+# QoG_selected$gti_gti <- as.numeric(QoG_selected$gti_gti)
+# QoG_selected$bmr_dem <- as.numeric(QoG_selected$bmr_dem)
+# corrplot.mixed(cor(na.omit(QoG_selected[,!names(QoG_selected) %in% c("VertexName")])), 
+#                upper = 'number',
+#                lower = "circle",
+#                tl.pos = "lt",
+#                tl.col = "black",
+#                tl.cex = 0.8,
+#                addCoefasPercent = TRUE,
+#                number.cex=0.8)
+
+# Även wbgi_pve och wdi_migration är korrelerade (25)
+
+colnames(QoG_selected) <- c("VertexName","NonViolence","NetMigration")
+colSums(is.na(QoG_selected[,colSums(is.na(QoG_selected))>0]))
 
 
 # ======================= - Dyad attribute - =======================
@@ -217,6 +266,7 @@ VertexAttributes_Raw <- merge(VertexAttributes_Raw, Language_final, by = "Vertex
 VertexAttributes_Raw <- merge(VertexAttributes_Raw, Coloniser_final, by = "VertexName", all.x = TRUE)
 VertexAttributes_Raw <- merge(VertexAttributes_Raw, Colonised_final, by = "VertexName", all.x = TRUE)
 VertexAttributes_Raw <- merge(VertexAttributes_Raw, CountrySize_final, by = "VertexName", all.x = TRUE)
+VertexAttributes_Raw <- merge(VertexAttributes_Raw, QoG_selected, by = "VertexName", all.x = TRUE)
 
 
 # Create table for dyad attributes
@@ -232,6 +282,7 @@ DyadAttributes_Raw <- merge(DyadAttributes_Raw, RelDistance_final,
                         by.x = c("Origin","Destination"), 
                         by.y = c("countrycode_1","countrycode_2"), all.x = TRUE)
 
+DyadAttributes_Raw$reldist_weighted <- round(DyadAttributes_Raw$reldist_weighted, digits = 4)
 
 # ============== - Output Variables - =======================
 
@@ -240,11 +291,11 @@ VertexAttributes_Raw <- VertexAttributes_Raw
 DyadAttributes_Raw <- DyadAttributes_Raw
 
 # Variables cleaning - Comment/Uncomment at will
-rm(Colonised, Coloniser, ColonisingInfo, GDP_WBG, GDP_WBG_selected, 
+rm(Colonised, Coloniser, ColonisingInfo, GDP_WBG, GDP_WBG_selected, qog_std_cs_jan25,
    geo_cepii, geo_cepii_selected, geodist_PSW24, passportISO3, PassportMat, 
    religious_distance_PSW2024, boolsum, Colonisers, i)
 
-rm(Colonised_final, Coloniser_final, CountrySize_final, GDP_final,
+rm(Colonised_final, Coloniser_final, CountrySize_final, GDP_final, QoG_selected,
    GeoDistance_final, Language_final, RelDistance_final)
 
 

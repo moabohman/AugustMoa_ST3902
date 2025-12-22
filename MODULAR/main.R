@@ -2,7 +2,7 @@
 
 # Set working directory
 setwd("~/GitHub/BachelorThesis/MODULAR")
-
+# setwd("/Users/hassearrow/BachelorThesis/MODULAR")
 
 
 # --- Data retrieval and cleaning ---
@@ -11,25 +11,22 @@ source("DataExplorationAndTransformation.R")
 source("DataImputation.R")
 
 # --- Specific for non-network specific models ---
-source("DataPrepLR.R")
+source("DataPrepTidyData.R")
 source("LogisticRegression.R")
-# source("DataPrepMN.R")
-# source("MN_Test.R")
 
 # --- Network specific models ---
-source("DataExploration_AdjMat.R")
+# source("DataExploration_network.R")
 source("DataPrepSNA.R")
-source("ERGM.R")
-source("LSM.R")
 
 
-source(".R")
-source(".R")
-source(".R")
-source(".R")
-source(".R")
-source(".R")
-source(".R")
-source(".R")
-source(".R")
+
+
+
+# Files to be run manually:
+
+"DependencyExploration_Reciprocality.R"
+
+"FitModel_ERGM.R"
+"FitModel_LSM.R"
+"LSM_Evaluation.R"
 
