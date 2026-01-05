@@ -1,24 +1,18 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR/DataRetrieval")
+##################################################
+#                                                #
+#                 DataRetrieval                  #
+#                                                #
+##################################################
 
-# setwd("~/GitHub/BachelorThesis/MODULAR")
 
+# ============== - Main variable/The Adjacency Matrix - ==============
 
-# Libraries
-
-library(tidyverse)
-library(readxl)
-library(haven)
 
 passportISO3 <- read.csv(
   url("https://raw.githubusercontent.com/ilyankou/passport-index-dataset/master/passport-index-matrix-iso3.csv"))
-# tempppp <- read.csv(
-#   url("https://raw.githubusercontent.com/ilyankou/passport-index-dataset/master/passport-index-tidy-iso3.csv"))
-# rm(tempppp)
+
+# Transfer nodenames to rownames instead of first column
 rownames(passportISO3) <- passportISO3$Passport
-# Remove first column
 passportISO3 <- passportISO3[,-1]
 
 # Sort rows and columns to match each other
@@ -32,57 +26,25 @@ for (i in 1:199) {
   boolsum <- boolsum + (passportISO3[i,i] == -1)
 }
 
-# Adjacency matrix done
-# ----------
-
-### Save data
-# write.csv(passportISO3,file='AdjMat_NonDich.csv')
-
-
 # Dichotomise values
 PassportMat <- as.matrix(passportISO3)
 AdjMat <- passportISO3
 AdjMat[,] <- 0
 AdjMat[(PassportMat == "visa free")] <- 1
 AdjMat[(PassportMat == "visa on arrival")] <- 1
-# AdjMat[(PassportMat == "10")] <- 1
-# AdjMat[(PassportMat == "120")] <- 1
-# AdjMat[(PassportMat == "14")] <- 1
-# AdjMat[(PassportMat == "15")] <- 1
-# AdjMat[(PassportMat == "150")] <- 1
-# AdjMat[(PassportMat == "180")] <- 1
-# AdjMat[(PassportMat == "21")] <- 1
-# AdjMat[(PassportMat == "240")] <- 1
-# AdjMat[(PassportMat == "28")] <- 1
-# AdjMat[(PassportMat == "30")] <- 1
-# AdjMat[(PassportMat == "31")] <- 1
-# AdjMat[(PassportMat == "360")] <- 1
-# AdjMat[(PassportMat == "42")] <- 1
-# AdjMat[(PassportMat == "45")] <- 1
-# AdjMat[(PassportMat == "60")] <- 1
-# AdjMat[(PassportMat == "7")] <- 1
-# AdjMat[(PassportMat == "90")] <- 1
 
 AdjMat <- as.matrix(AdjMat)
-
-# Dichotomised adjacency matrix complete
-# ----------
 
 # Extract vertex name (Country ISO-3)
 VertexName <- row.names(AdjMat)
 
-# Also create a nameFinder for future analysis
+# Also create a list with real names for future analysis
 ISO3_Countrynames_Converter <- read_xlsx("DataRetrieval/ISO3_Countrynames_Converter.xlsx")
 VertexName_CountryName <- merge(as.data.frame(VertexName), ISO3_Countrynames_Converter, 
                           by.x = "VertexName", 
                           by.y = "ISO3", all.x = TRUE)
 Vertex_RealNames <- VertexName_CountryName[,2]
 rm(ISO3_Countrynames_Converter)
-
-### Save data
-# write.csv(VertexName,file='PassportCountries.csv')
-# write.csv(VertexName_CountryName,file='VertexName_CountryName.csv')
-
 
  
 # ======================= - Vertex attribute - =======================
@@ -301,5 +263,4 @@ rm(Colonised_final, Coloniser_final, CountrySize_final, GDP_final, QoG_selected,
 
 # ~=~=~=~=~=~=~=~=~ Unfinished in this script: ~=~=~=~=~=~=~=~=~
 
-# - QoG source, including terror
 # - Choosing year for GDP

@@ -1,15 +1,9 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#                 DataImputation                 #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
-library(mice)
-library(esquisse)
-library(fBasics)
-library(interp)
 
 # ============== - Input Variables - =======================
 
@@ -21,7 +15,7 @@ VertexAttributes_Imp <- VertexAttributes_Trans
 # =========================================================
 # =========================================================
 
-### Due to scewed data transformation of variables were made
+### Due to scewed data, transformation of variables were made
 ### before imputation (vanBuuren, pp. 74-75, 116) - 
 ### 
 ### "Vroomen et al.(2016) investigated imputation of cost data, 
@@ -133,38 +127,7 @@ summary(VertexAttributes_Complete)
 hist(VerAtt_Vis$ln_GDP)
 hist(VertexAttributes_Complete$ln_GDP)
 # Complete hist DO look a little skewed to the left - But more even distributed!
-
-# # Transform to logarithm and re-visualize
-# VertexAttributes_Complete <- VertexAttributes_Complete %>% 
-#   mutate(ln_GDP = log(GDP))
-# hist(VertexAttributes_Complete$Trans_GDP)
-
-# Formal tests
-pchiTest(VerAtt_Vis$ln_GDP) # - Not normal
-pchiTest(na.exclude(VerAtt_Vis$ln_GDP)) # Still not normal, but closer: P-value 0.04905
-jbTest(na.exclude(VerAtt_Vis$ln_GDP)) # - Normal
-shapiro.test(VerAtt_Vis$ln_GDP) # - Normal
-
-pchiTest(VertexAttributes_Complete$ln_GDP) # - Actually normal! P-value 0.1131 
-jbTest(VertexAttributes_Complete$ln_GDP) # - NOT normal!
-shapiro.test(VertexAttributes_Complete$ln_GDP) # - Barely not normal!
-
-TransTest <- (exp(VertexAttributes_Complete$ln_GDP))^(1/20) # 1/20 - 1/40 ? 
-hist(TransTest, breaks = 10)
-                    # Values for ^(1/20):
-pchiTest(TransTest) # - Normal: P-value 0.07791 
-jbTest(TransTest) # - Normal
-shapiro.test(TransTest) # - Normal: P-value 0.3134
-
-# But this DOES feel a little shady!
-# Let's leave it as ln_GDP for now,
-# but leave code above for future potential needs
-# 
-# QUESTION: Does the variables need to be normal distributed, 
-# except for the imputation process? (Low prio)
-
-rm(TransTest)
-
+# Manually imputed values probably affects the distribution substantially.
 
 # ------------
 # --- Area ---
@@ -174,15 +137,6 @@ hist(VerAtt_Vis$Transformed_Area)
 hist(VertexAttributes_Complete$Transformed_Area)
 # Rather equal
 
-# Formal tests
-pchiTest(VerAtt_Vis$Transformed_Area) # - Not normal
-pchiTest(na.exclude(VerAtt_Vis$Transformed_Area)) # Not adjusted is barely signifcant: P-value 0.05741
-jbTest(na.exclude(VerAtt_Vis$Transformed_Area)) # - Normal
-shapiro.test(VerAtt_Vis$Transformed_Area) # - Not normal
-
-pchiTest(VertexAttributes_Complete$Transformed_Area) # - Normal!
-jbTest(VertexAttributes_Complete$Transformed_Area) # - Normal!
-shapiro.test(VertexAttributes_Complete$Transformed_Area)  # - Not normal (but close)
 
 # -------------------
 # --- NonViolence ---
@@ -200,21 +154,6 @@ hist(VerAtt_Vis$Trans_NetMigration)
 hist(VertexAttributes_Complete$Trans_NetMigration)
 # More scewed...
 
-# Formal tests
-pchiTest(VerAtt_Vis$Trans_NetMigration) # - Not normal
-pchiTest(na.exclude(VerAtt_Vis$Trans_NetMigration)) # Normal
-jbTest(na.exclude(VerAtt_Vis$Trans_NetMigration)) # - Normal
-shapiro.test(VerAtt_Vis$Trans_NetMigration) # - Not normal
-
-pchiTest(VertexAttributes_Complete$Trans_NetMigration) # - Normal
-jbTest(VertexAttributes_Complete$Trans_NetMigration) # - Normal (but lower p-value...)
-shapiro.test(VertexAttributes_Complete$Trans_NetMigration)  # - Normal (but lower p-value...)
-
-
-# --- Keep transfomed variables and clean out original ones ---
-
-# VertexAttributes_Complete <- VertexAttributes_Complete[,!names(
-#   VertexAttributes_Complete) %in% c("GDP","Area")]
 
 # ================================================================
 # --- Create language groups to decrease number of cathegories ---
@@ -236,12 +175,6 @@ VertexAttributes_Complete$LangGroup[!(VertexAttributes_Complete$Language %in% na
 ### Save data
 write.csv(VertexAttributes_Complete,file='VertexAttributes_Complete.csv')
 
-# CSV For DataRAndC_test.R
-# write.csv(VertexAttributes,file='VertexAttributes.csv')
-# write.csv(DyadAttributes,file='DyadAttributes.csv')
-# write.csv(AdjMat,file='AdjMat.csv')
-
-
 
 # ============== - Output Variables - =======================
 
@@ -260,7 +193,4 @@ save(DyadAttributes, file = "DyadAttributes.RData")
 
 # ~=~=~=~=~=~=~=~=~ Unfinished in this script: ~=~=~=~=~=~=~=~=~
 
-# - Source manual Languages? (low prio)
-# - Re-transform variables? Gör man så?? Also: Why? Are there a need for
-#     the variables to be normal distributed, now that the imputation is done?
 # - Kan vi använda norm istället för pmm? Eller norm.boot?

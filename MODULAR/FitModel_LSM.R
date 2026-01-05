@@ -1,16 +1,32 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#                  FitModel_LSM                  #
+#                                                #
+##################################################
 
-# Libraries
+##################################################
+#                                                #
+#       Note that the numbering of models        #
+#       in the report is not aligned with        #
+#       these numbers.                           #
+#       The key is as follows:                   #
+#                                                #
+#       R-Modell	  Model in report              #
+#        LSM1	        Modell 1                   #
+#        LSM2	        Modell 2                   #
+#        LSM10	      Modell 3                   #
+#        LSM11	      Modell 4                   #
+#        LSM14	      Modell 5                   #
+#        LSM15	      Modell 6                   #
+#        LSM16,24,27  Modell 7                   #
+#        LSM17,28     Modell 8                   #
+#        LSM18,29     Modell 9                   #
+#        LSM26	      Modell 10                  #
+#        LSM25	      Modell 11                  #
+#                                                #
+#                                                #
+##################################################
 
-library(tidyverse)
-library(statnet)
-library(latentnet)
-library(sna)
-library(plotly)
-library(rgl)
 
 # ============== - Input Variables - =======================
 
@@ -69,7 +85,7 @@ plot(LSM2,use.rgl=FALSE, labels = TRUE)
 Coordinates <- as.data.frame(LSM2$mkl$Z)
 names(Coordinates) <- c("x1","x2","x3")
 Coordinates <- cbind(Coordinates, VertexName)
-plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~Vertex_RealNames)
 # ---- .. ----
 
 # ---- Diagnostics ----
@@ -871,7 +887,7 @@ plot(LSM18,use.rgl=TRUE, labels = TRUE,
 Coordinates <- as.data.frame(LSM18$mkl$Z)
 names(Coordinates) <- c("x1","x2","x3")
 Coordinates <- cbind(Coordinates, VertexName)
-plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~Vertex_RealNames)
 # ---- .. ----
 
 # ---- Diagnostics ----
@@ -913,9 +929,6 @@ summary(LSM19)
 gof_LSM19 <- gof(LSM19)
 plot(gof_LSM19)
 # save(gof_LSM19, file = "gof_LSM19.RData")
-
-par(par_temp)
-par(mfrow=c(2,2))
 
 plot(LSM19,use.rgl=FALSE, labels = TRUE)
 plot(LSM19,use.rgl=TRUE, labels = TRUE, 
@@ -968,9 +981,6 @@ gof_LSM20 <- gof(LSM20)
 plot(gof_LSM20)
 # save(gof_LSM20, file = "gof_LSM20.RData")
 
-par(par_temp)
-par(mfrow=c(2,2))
-
 plot(LSM20,use.rgl=FALSE, labels = TRUE)
 plot(LSM20,use.rgl=TRUE, labels = TRUE, 
      edge.plot3d = FALSE, vertex.3d.cex = 0.1)
@@ -979,7 +989,7 @@ plot(LSM20,use.rgl=TRUE, labels = TRUE,
 Coordinates <- as.data.frame(LSM20$mkl$Z)
 names(Coordinates) <- c("x1","x2","x3")
 Coordinates <- cbind(Coordinates, VertexName)
-plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~Vertex_RealNames)
 # ---- .. ----
 
 # ---- Diagnostics ----
@@ -1032,7 +1042,7 @@ plot(LSM21,use.rgl=TRUE, labels = TRUE,
 Coordinates <- as.data.frame(LSM21$mkl$Z)
 names(Coordinates) <- c("x1","x2","x3")
 Coordinates <- cbind(Coordinates, VertexName)
-plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~Vertex_RealNames)
 # ---- .. ----
 
 # ---- Diagnostics ----
@@ -1043,6 +1053,335 @@ plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
 # ---- .. ----
 
 
+
+
+# ============== - LSM22 - =======================
+
+summary(Visafree_network ~ nodematch("LangGroup")
+        + nodefactor("Coloniser")
+        + nodefactor("Colonised")
+        + nodecov("NonViolence")
+        + nodecov("ln_GDP")
+        + dyadcov(Dya_Border)
+)
+
+LSM22 <- ergmm(Visafree_network ~ euclidean(d = 3, G = 2)
+               + rsender
+               + rreceiver
+               + nodematch("LangGroup")
+               + nodefactor("Coloniser")
+               + nodefactor("Colonised")
+               + nodecov("NonViolence")
+               + nodecov("ln_GDP")
+               + dyadcov(Dya_Border)
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM22, file = "LSM22.RData")
+
+summary(LSM22)
+gof_LSM22 <- gof(LSM22)
+plot(gof_LSM22)
+# save(gof_LSM22, file = "gof_LSM22.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM22,use.rgl=FALSE, labels = TRUE)
+plot(LSM22,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM22$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM22)
+# # We can also plot the burn-in:
+# for(i in LSM22$control$pilot.runs) mcmc.diagnostics(LSM22,burnin=i)
+# ---- .. ----
+
+
+
+# ============== - LSM23 - =======================
+
+summary(Visafree_network ~ nodematch("LangGroup")
+        + nodefactor("Coloniser")
+        + nodecov("NonViolence")
+        + nodecov("ln_GDP")
+        + dyadcov(Dya_Border)
+)
+
+LSM23 <- ergmm(Visafree_network ~ euclidean(d = 3, G = 2)
+               + rsender
+               + rreceiver
+               + nodematch("LangGroup")
+               + nodefactor("Coloniser")
+               + nodecov("NonViolence")
+               + nodecov("ln_GDP")
+               + dyadcov(Dya_Border)
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM23, file = "LSM23.RData")
+
+summary(LSM23)
+gof_LSM23 <- gof(LSM23)
+plot(gof_LSM23)
+# save(gof_LSM23, file = "gof_LSM23.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM23,use.rgl=FALSE, labels = TRUE)
+plot(LSM23,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM23$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM23)
+# # We can also plot the burn-in:
+# for(i in LSM23$control$pilot.runs) mcmc.diagnostics(LSM23,burnin=i)
+# ---- .. ----
+
+
+
+
+# ============== - LSM24 - =======================
+
+# summary()
+LSM24 <- ergmm(Visafree_network ~ euclidean(d = 3, G = 2)
+               + rsender
+               + rreceiver
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM24, file = "LSM24.RData")
+
+summary(LSM24)
+gof_LSM24 <- gof(LSM24)
+plot(gof_LSM24)
+# save(gof_LSM24, file = "gof_LSM24.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM24,use.rgl=FALSE, labels = TRUE)
+plot(LSM24,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM24$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM24)
+# # We can also plot the burn-in:
+# for(i in LSM24$control$pilot.runs) mcmc.diagnostics(LSM24,burnin=i)
+# ---- .. ----
+
+
+
+
+# ============== - LSM25 - =======================
+
+# summary()
+LSM25 <- ergmm(Visafree_network ~ rsender + rreceiver
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM25, file = "LSM25.RData")
+
+summary(LSM25)
+gof_LSM25 <- gof(LSM25)
+plot(gof_LSM25)
+# save(gof_LSM25, file = "gof_LSM25.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM25,use.rgl=FALSE, labels = TRUE)
+plot(LSM25,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM25$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM25)
+# # We can also plot the burn-in:
+# for(i in LSM25$control$pilot.runs) mcmc.diagnostics(LSM25,burnin=i)
+# ---- .. ----
+
+
+
+
+# ============== - LSM26 - =======================
+
+# summary()
+LSM26 <- ergmm(Visafree_network ~ euclidean(d = 3)
+               + rsender
+               + rreceiver
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM26, file = "LSM26.RData")
+
+summary(LSM26)
+gof_LSM26 <- gof(LSM26)
+plot(gof_LSM26)
+# save(gof_LSM26, file = "gof_LSM26.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM26,use.rgl=FALSE, labels = TRUE)
+plot(LSM26,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM26$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM26)
+# # We can also plot the burn-in:
+# for(i in LSM26$control$pilot.runs) mcmc.diagnostics(LSM26,burnin=i)
+# ---- .. ----
+
+
+
+
+# ============== - LSM27 - =======================
+
+# summary()
+LSM27 <- ergmm(Visafree_network ~ euclidean(d = 3, G = 2)
+               + rsender
+               + rreceiver
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM27, file = "LSM27.RData")
+
+summary(LSM27)
+gof_LSM27 <- gof(LSM27)
+plot(gof_LSM27)
+# save(gof_LSM27, file = "gof_LSM27.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM27,use.rgl=FALSE, labels = TRUE)
+plot(LSM27,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM27$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM27)
+# # We can also plot the burn-in:
+# for(i in LSM27$control$pilot.runs) mcmc.diagnostics(LSM27,burnin=i)
+# ---- .. ----
+
+
+
+
+# ============== - LSM28 - =======================
+
+# summary()
+LSM28 <- ergmm(Visafree_network ~ euclidean(d = 3, G = 3)
+               + rsender
+               + rreceiver
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM28, file = "LSM28.RData")
+
+summary(LSM28)
+gof_LSM28 <- gof(LSM28)
+plot(gof_LSM28)
+# save(gof_LSM28, file = "gof_LSM28.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM28,use.rgl=FALSE, labels = TRUE)
+plot(LSM28,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM28$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM28)
+# # We can also plot the burn-in:
+# for(i in LSM28$control$pilot.runs) mcmc.diagnostics(LSM28,burnin=i)
+# ---- .. ----
+
+
+# ============== - LSM29 - =======================
+
+# summary()
+LSM29 <- ergmm(Visafree_network ~ euclidean(d = 3, G = 4)
+               + rsender
+               + rreceiver
+               , control=ergmm.control(store.burnin=TRUE))
+
+# save(LSM29, file = "LSM29.RData")
+
+summary(LSM29)
+gof_LSM29 <- gof(LSM29)
+plot(gof_LSM29)
+# save(gof_LSM29, file = "gof_LSM29.RData")
+
+par(par_temp)
+par(mfrow=c(2,2))
+
+plot(LSM29,use.rgl=FALSE, labels = TRUE)
+plot(LSM29,use.rgl=TRUE, labels = TRUE, 
+     edge.plot3d = FALSE, vertex.3d.cex = 0.1)
+
+# ---- Plot using plot_ly ----
+Coordinates <- as.data.frame(LSM29$mkl$Z)
+names(Coordinates) <- c("x1","x2","x3")
+Coordinates <- cbind(Coordinates, VertexName)
+plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3, color= ~VertexName)
+# ---- .. ----
+
+# ---- Diagnostics ----
+# # See if we have convergence in the MCMC
+# mcmc.diagnostics(LSM29)
+# # We can also plot the burn-in:
+# for(i in LSM29$control$pilot.runs) mcmc.diagnostics(LSM29,burnin=i)
+# ---- .. ----
 
 
 

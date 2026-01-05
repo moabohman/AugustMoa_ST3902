@@ -1,18 +1,15 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#                DataPrepTidyData                #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
 
 # ============== - Input Variables - =======================
 
 AdjMat <- AdjMat
 VerAtt_LR <- VertexAttributes
 DyaAtt_LR <- DyadAttributes
-
 
 # ========== - Create data in tidy format - ================
 
@@ -23,8 +20,9 @@ Destination_VerAtt <- VerAtt_LR
 # Rename columns for origin
 OriginColnames <- colnames(Origin_VerAtt[1])
 for (i in 2:length(Origin_VerAtt)) {
-  OriginColnames <- cbind(OriginColnames, (paste(c("Origin", colnames(Origin_VerAtt[i])), collapse = "")))
-  
+  OriginColnames <- cbind(
+    OriginColnames, 
+    (paste(c("Origin", colnames(Origin_VerAtt[i])), collapse = "")))
 }
 colnames(Origin_VerAtt) <- OriginColnames
 rm(OriginColnames)
@@ -32,8 +30,9 @@ rm(OriginColnames)
 # Rename columns for destination
 DestinationColnames <- colnames(Destination_VerAtt[1])
 for (i in 2:length(Destination_VerAtt)) {
-  DestinationColnames <- cbind(DestinationColnames, (paste(c("Destination", colnames(Destination_VerAtt[i])), collapse = "")))
-  
+  DestinationColnames <- cbind(
+    DestinationColnames, 
+    (paste(c("Destination", colnames(Destination_VerAtt[i])), collapse = "")))
 }
 colnames(Destination_VerAtt) <- DestinationColnames
 rm(DestinationColnames)

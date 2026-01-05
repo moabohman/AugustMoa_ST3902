@@ -1,20 +1,14 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#            DataExploration_network             #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
-library(sna)
-library(network)
-library(latentnet)
 
 # ============== - Input Variables - =======================
 
 AdjMat <- AdjMat
 Visafree_network <- Visafree_network
-
 
 # ========== - Visualize the adjacency matrix/the network - ================
 
@@ -80,12 +74,22 @@ plot(Visafree_network, mode="circle",
      arrowhead.cex=0.5, edge.lwd = 0.01)
 plot(Visafree_network, mode="kamadakawai")
 
-
+# --- Plots med ipgraph-objektet ---
+# Basic force-directed layout
+plot(Visafree_igraph_network, layout=layout_with_fr, vertex.size=alldeg*0.05,
+     vertex.label = NA, vertex.color="skyblue",
+     edge.arrow.size=0.1)
+plot(Visafree_igraph_network, layout=layout.kamada.kawai)
+plot(Visafree_igraph_network, layout=layout_with_fr(Visafree_igraph_network),
+     edge.arrow.size=0.1)
 
 is.multiplex(Visafree_network)
 is.directed(Visafree_network)
 has.loops(Visafree_network)
 ecount(Visafree_network)
+
+# =========================================================
+
 
 library("sna")
 plot.sociomatrix(AdjMat, main = "Sociomatrix")

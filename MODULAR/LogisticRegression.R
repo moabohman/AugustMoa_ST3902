@@ -1,22 +1,14 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#               LogisticRegression               #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
-library(esquisse)
-library(corrplot)
-library(car)
-library(caret)
-library(pROC)
 
 # ============== - Input Variables - =======================
 
 TidyData <- TidyData
 # names(TidyData)
-
 
 # ====================== - Data exploration - =======================
 # Mainly for multicollinearity (and outliers, as well as correlation to Visafree)
@@ -25,26 +17,26 @@ TidyData_asFactor <- TidyData
 TidyData_asFactor$Visafree <- as.factor(TidyData_asFactor$Visafree)
 # esquisser(TidyData_asFactor, viewer = "browser")
 
+cor(TidyData[,!names(TidyData) %in% c(
+  "Origin","Destination","border",
+  "OriginLanguage", "DestinationLanguage",
+  "OriginLangGroup", "DestinationLangGroup",
+  "OriginColoniser","OriginColonised",
+  "DestinationColoniser","DestinationColonised")])
 
-
-cor(TidyData[,!names(TidyData) %in% c("Origin","Destination","border",
-                                      "OriginLanguage", "DestinationLanguage",
-                                      "OriginLangGroup", "DestinationLangGroup",
-                                      "OriginColoniser","OriginColonised",
-                                      "DestinationColoniser","DestinationColonised")])
-
-corrplot.mixed(cor(TidyData[,!names(TidyData) %in% c("Origin","Destination","border",
-                                                     "OriginLanguage", "DestinationLanguage",
-                                                     "OriginLangGroup", "DestinationLangGroup",
-                                                     "OriginColoniser","OriginColonised",
-                                                     "DestinationColoniser","DestinationColonised")]), 
-               upper = 'number',
-               lower = "circle",
-               tl.pos = "lt",
-               tl.col = "black",
-               tl.cex = 0.8,
-               addCoefasPercent = TRUE,
-               number.cex=0.8)
+corrplot.mixed(cor(TidyData[,!names(TidyData) %in% c(
+    "Origin","Destination","border",
+    "OriginLanguage", "DestinationLanguage",
+    "OriginLangGroup", "DestinationLangGroup",
+    "OriginColoniser","OriginColonised",
+    "DestinationColoniser","DestinationColonised")]),
+  upper = 'number',
+  lower = "circle",
+  tl.pos = "lt",
+  tl.col = "black",
+  tl.cex = 0.8,
+  addCoefasPercent = TRUE,
+  number.cex=0.8)
 
 
 ## Correlations:

@@ -1,9 +1,13 @@
 # Run all scripts in right order
 
 # Set working directory
-setwd("~/GitHub/BachelorThesis/MODULAR")
+setwd("C:/Users/moaka/OneDrive - Stockholm University/Documents/Studier_Arkiv/UppsatsenHT25/GitHub/BachelorThesis/MODULAR")
 # setwd("/Users/hassearrow/BachelorThesis/MODULAR")
 
+# Samling av (förhoppningsvis) alla nödvändiga paket ---
+source("LibraryCollection.R")
+
+# =========================================================
 
 # --- Data retrieval and cleaning ---
 source("DataRetrieval.R")
@@ -15,7 +19,7 @@ source("DataPrepTidyData.R")
 source("LogisticRegression.R")
 
 # --- Network specific models ---
-# source("DataExploration_network.R")
+# source("DataExploration_network.R")     -- Run manually!
 source("DataPrepSNA.R")
 
 
@@ -26,7 +30,10 @@ source("DataPrepSNA.R")
 
 "DependencyExploration_Reciprocality.R"
 
-"FitModel_ERGM.R"
 "FitModel_LSM.R"
 "LSM_Evaluation.R"
 
+# Ofärdiga script: (laboration pågår)
+"Gof_enhanced.R"
+"Diagnostics.R"   # (ModelExploration)
+"3D_plots.R"

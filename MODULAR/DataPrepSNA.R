@@ -1,19 +1,15 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#                  DataPrepSNA                   #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
-library(statnet)
 
 # ============== - Input Variables - =======================
 
 AdjMat <- AdjMat
 VerAtt_SNA <- VertexAttributes
 DyaAtt_SNA <- DyadAttributes
-
 
 # ========== - Select covariates - ================
 # Let's skip Language and Transformed_Area for now
@@ -22,8 +18,7 @@ VerAtt_SNA <- VerAtt_SNA[,!names(VerAtt_SNA) %in% c("Language", "Transformed_Are
 
 # ========== - Create network object - ================
 
-# Skapa nätverk
-
+# Create network
 Visafree_network <- as.network(AdjMat, directed = TRUE, matrix.type = "adjacency")
 Visafree_network
 
@@ -52,7 +47,6 @@ Dya_GeoDistanceNorm <- as.matrix(Dya_GeoDistanceNorm)
 # Dya_GeoDistanceNorm <- symmetrize(Dya_GeoDistanceNorm, rule = "upper")
 
 # --- RelDistance ---
-
 Dya_RelDistance <- xtabs(reldist_weighted ~ Origin + Destination, 
                          data = DyaAtt_SNA, sparse = TRUE)
 Dya_RelDistance <- as.matrix(Dya_RelDistance)

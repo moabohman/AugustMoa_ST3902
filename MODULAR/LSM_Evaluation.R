@@ -1,9 +1,17 @@
+##################################################
+#                                                #
+#                 LSM_Evaluation                 #
+#                                                #
+##################################################
+
+
+# ======= - Conversion function: Matrix to Tidydata - =======
 
 AdjMat_To_TidyDataDf <- function(InputMatrix) {
   
   # Turn matrix into dataframe
   TidyData_df <- data.frame(as.table(InputMatrix))
-  colnames(TidyData_df) <- c("Origin", "Destination", "Visafree")
+  colnames(TidyData_df) <- c("Origin", "Destination", "Value")
   
   # Clean Origin == Destination
   TidyData_df <- TidyData_df[!(TidyData_df$Origin==TidyData_df$Destination),]
@@ -15,33 +23,33 @@ AdjMat_To_TidyDataDf <- function(InputMatrix) {
 
 
 # --- Retrieve predicted values ---
-LSM20_pred <- predict(LSM20)
+LSM26_pred <- predict(LSM26)
 
 # --- Classify observations ---
 # Choose cut-off level
 c_LSM <- 0.5
-LSM20_classification <- ifelse(LSM20_pred > c_LSM, 1, 0)
+LSM26_classification <- ifelse(LSM26_pred > c_LSM, 1, 0)
 
 
 # --- Data transformation ---
-colnames(LSM20_pred) <- VertexName
-rownames(LSM20_pred) <- VertexName
+colnames(LSM26_pred) <- VertexName
+rownames(LSM26_pred) <- VertexName
 
-colnames(LSM20_classification) <- VertexName
-rownames(LSM20_classification) <- VertexName
+colnames(LSM26_classification) <- VertexName
+rownames(LSM26_classification) <- VertexName
 
 
-LSM20_pred_Tidy <- AdjMat_To_TidyDataDf(LSM20_pred)
-LSM20_Classi_Tidy <- AdjMat_To_TidyDataDf(LSM20_classification)
+LSM26_pred_Tidy <- AdjMat_To_TidyDataDf(LSM26_pred)
+LSM26_Classi_Tidy <- AdjMat_To_TidyDataDf(LSM26_classification)
 AdjMat_Tidy <- AdjMat_To_TidyDataDf(AdjMat)
 
 
 # --- Make a confusion matrix ---
-confusionMatrix(as.factor(LSM20_Classi_Tidy$Visafree), 
-                as.factor(AdjMat_Tidy$Visafree))
+confusionMatrix(as.factor(LSM26_Classi_Tidy$Value), 
+                as.factor(AdjMat_Tidy$Value))
 
 # --- Analyze the ROC curve ---
-roc(AdjMat_Tidy$Visafree ~ LSM20_pred_Tidy$Visafree, 
+roc(AdjMat_Tidy$Value ~ LSM26_pred_Tidy$Value, 
     plot = TRUE, print.auc = TRUE)
 
 
