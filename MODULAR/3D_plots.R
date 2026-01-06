@@ -39,11 +39,11 @@ plot(LSM16,use.rgl=TRUE, labels = TRUE,
 
 # ---- Plot using plot_ly ----
 Coordinates <- as.data.frame(LSM16$mkl$Z)
-names(Coordinates) <- c("x1","x2","x3")
+names(Coordinates) <- c("Z1","Z2","Z3")
 Coordinates <- cbind(Coordinates, VertexName, Vertex_RealNames,
                      LSM16[["mkl"]][["receiver"]], LSM16[["mkl"]][["sender"]],
                      LSM16[["mkl"]][["Z.K"]])
-names(Coordinates) <- c("x1","x2","x3", "VertexName","Vertex_RealNames",
+names(Coordinates) <- c("Z1","Z2","Z3", "VertexName","Vertex_RealNames",
                         "Receiver", "Sender", "Group")
 
 
@@ -53,7 +53,7 @@ ModelNAtts$Area <- ((ModelNAtts$Transformed_Area)^9)/1000000
 ModelNAtts$NetMigration <- ((ModelNAtts$Trans_NetMigration)^5)
 
 
-plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3
+plot_ly(Coordinates, x = ~Z1, y = ~Z2, z = ~Z3
         , size = ~Sender
         , marker = list(symbol = 'circle', sizemode = 'diameter')
         , sizes = c(5, 50)
@@ -61,10 +61,10 @@ plot_ly(Coordinates, x = ~x1, y = ~x2, z = ~x3
 
 
 
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, color = ~VertexName)
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, color = ~VertexName)
 
 # Visualisering med GDP
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7,
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
                        ,'<br>GDP (milj. dollar):', GDP
@@ -74,7 +74,7 @@ plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
                       showscale = TRUE))
 
 # Visualisering med Area
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7, 
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7, 
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
                        ,'<br>GDP (milj. dollar):', GDP
@@ -85,7 +85,7 @@ plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
                       showscale = TRUE))
 
 # Visualisering med NonViolence
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7, 
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7, 
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
                        ,'<br>GDP (milj. dollar):', GDP
@@ -103,7 +103,7 @@ plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
 )
 
 # Visualisering med NetMigration
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7, 
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7, 
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
                        ,'<br>GDP (milj. dollar):', GDP
@@ -115,8 +115,8 @@ plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
                       showscale = TRUE))
 
 # Visualisering med Group
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
-        color = ~Group, colors = c('#BF382A', '#0C4B8E'),
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7,
+        color = ~Group, colors = c('#FF2500', '#008700'),
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
                        ,'<br>GDP (milj. dollar):', GDP
@@ -124,7 +124,7 @@ plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
         ))
 
 # Visualisering med Coloniser
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7,
         color = ~Coloniser, colors = c('#BF382A', '#0C4B8E'),
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
@@ -134,7 +134,7 @@ plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
         ))
 
 # Visualisering med Colonised
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7,
         color = ~Colonised, colors = c('#BF382A', '#0C4B8E'),
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
@@ -146,7 +146,7 @@ plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
 colors <- c('#4AC6B7', '#4912A4', '#565F8A', '#FF7070', '#C61951',
             '#965F8A', '#197224', '#C619F1', '#1619F1')
 # Visualisering med LangGroup
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7,
         color = ~LangGroup, colors = colors,
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
@@ -170,7 +170,7 @@ colors67 <- c("#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd",
               "#8da0cb","#e78ac3","#a6d854", "#ffd92f","#e5c494",
               "#b3b3b3",'#C619F1')
 # Visualisering med Language
-plot_ly(ModelNAtts, x = ~x1, y = ~x2, z = ~x3, alpha = 0.7,
+plot_ly(ModelNAtts, x = ~Z1, y = ~Z2, z = ~Z3, alpha = 0.7,
         color = ~Language, colors = colors67,
         text =  ~paste('Country:', Vertex_RealNames,
                        '<br>ISO3:', VertexName 
