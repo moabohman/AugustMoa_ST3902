@@ -3,4 +3,6 @@ August och Moas filer kopplade till ST3902, Självständigt arbete i statistik f
 
 
 
-Översikt över samtliga filer finns i main.R
+Översikt över samtliga script finns i main.R
+
+Nödvändiga filer för datainhämtning finns i mappen MODULAR\DataRetrieval. 
