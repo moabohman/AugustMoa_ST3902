@@ -1,18 +1,12 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#        DataExplorationAndTransformation        #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
-library(esquisse)
-library(fBasics)
-library(interp)
 
 # ============== - Input Variables - =======================
 
-# source("DataRetrieval.R")
 VerAtt_Vis <- VertexAttributes_Raw
 DyaAtt_Vis <- DyadAttributes_Raw
 
@@ -34,12 +28,6 @@ VerAtt_Vis <- VerAtt_Vis %>%
   mutate(ln_GDP = log(GDP))
 hist(VerAtt_Vis$ln_GDP)
 # Much better! Near normal as well!
-
-# Formal tests
-pchiTest(VerAtt_Vis$ln_GDP) # - Not normal
-pchiTest(na.exclude(VerAtt_Vis$ln_GDP)) # Still not normal, but closer: P-value 0.04905
-jbTest(na.exclude(VerAtt_Vis$ln_GDP)) # - Normal
-shapiro.test(VerAtt_Vis$ln_GDP) # - Normal
 
 
 # ----------------
@@ -81,24 +69,36 @@ VerAtt_Vis <- VerAtt_Vis %>%
   mutate(Transformed_Area = (Area)^(1/9))
 
 hist(VerAtt_Vis$Transformed_Area)
-# Better! (Could use bestNormalized, but leads to diminishing improvement)
-# (Could we, with missing data? Maybe transcan() or aregImpute() 
-# of the Hmisc package in R? (vanBuuren, pp. 116)
+# Better!
 
-# Formal tests
-pchiTest(VerAtt_Vis$Transformed_Area) # - Not normal
-pchiTest(na.exclude(VerAtt_Vis$Transformed_Area)) # Not adjusted is barely signifcant: P-value 0.05741
-jbTest(na.exclude(VerAtt_Vis$Transformed_Area)) # - Normal
-shapiro.test(VerAtt_Vis$Transformed_Area) # - Not normal
+
+
+# -------------------
+# --- NonViolence ---
+# -------------------
+
+hist(VerAtt_Vis$NonViolence)
+# Scew. Not normal.
+
+# --------------------
+# --- NetMigration ---
+# --------------------
+
+hist(VerAtt_Vis$NetMigration)
+
+
+# Transform and re-visualize
+VerAtt_Vis <- VerAtt_Vis %>% 
+  mutate(Trans_NetMigration = (NetMigration)^(1/5))
+hist(VerAtt_Vis$Trans_NetMigration)
 
 
 # --- Keep transfomed variables and clean out original ones ---
 
-VerAtt_Vis <- VerAtt_Vis[,!names(VerAtt_Vis) %in% c("GDP","Area")]
+VerAtt_Vis <- VerAtt_Vis[,!names(VerAtt_Vis) %in% c("GDP","Area", "NetMigration")]
 
 
 # Final visualization
-
 
 
 # esquisser(VerAtt_Vis, viewer = "browser")
@@ -121,7 +121,8 @@ summary(DyaAtt_Vis)
 # -----------------------
 
 hist(DyaAtt_Vis$avg_distance_km)
-
+summary(DyaAtt_Vis$avg_distance_km)
+# Scew (Big numbers!)
 
 # -------------------------
 # --- avg_distance_norm ---
@@ -134,7 +135,6 @@ hist(DyaAtt_Vis$avg_distance_norm)
 # -----------------
 
 table(DyaAtt_Vis$border)
-
 
 # ------------------------
 # --- reldist_weighted ---
@@ -150,12 +150,10 @@ VertexAttributes_Trans <- VerAtt_Vis
 DyadAttributes_Trans <- DyaAtt_Vis
 
 # Variables cleaning - Comment/Uncomment at will
-rm(CommonLanguages)
+# rm()
 
 
 # ~=~=~=~=~=~=~=~=~ Unfinished in this script: ~=~=~=~=~=~=~=~=~
 
-# - Re-cathegorise Language into fewer cathegories
-#     (maybe keep original as well)
-# - Do dyad attributes need to get transformed for any reason?
+
 

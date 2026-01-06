@@ -1,50 +1,42 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#               LogisticRegression               #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
-library(car)
-library(caret)
-library(pROC)
 
 # ============== - Input Variables - =======================
 
 TidyData <- TidyData
 # names(TidyData)
 
-
 # ====================== - Data exploration - =======================
 # Mainly for multicollinearity (and outliers, as well as correlation to Visafree)
 
-library(esquisse)
 TidyData_asFactor <- TidyData
 TidyData_asFactor$Visafree <- as.factor(TidyData_asFactor$Visafree)
 # esquisser(TidyData_asFactor, viewer = "browser")
 
+cor(TidyData[,!names(TidyData) %in% c(
+  "Origin","Destination","border",
+  "OriginLanguage", "DestinationLanguage",
+  "OriginLangGroup", "DestinationLangGroup",
+  "OriginColoniser","OriginColonised",
+  "DestinationColoniser","DestinationColonised")])
 
-
-cor(TidyData[,!names(TidyData) %in% c("Origin","Destination","border",
-                                      "OriginLanguage", "DestinationLanguage",
-                                      "OriginLangGroup", "DestinationLangGroup",
-                                      "OriginColoniser","OriginColonised",
-                                      "DestinationColoniser","DestinationColonised")])
-
-library(corrplot)
-corrplot.mixed(cor(TidyData[,!names(TidyData) %in% c("Origin","Destination","border",
-                                                     "OriginLanguage", "DestinationLanguage",
-                                                     "OriginLangGroup", "DestinationLangGroup",
-                                                     "OriginColoniser","OriginColonised",
-                                                     "DestinationColoniser","DestinationColonised")]), 
-               upper = 'number',
-               lower = "circle",
-               tl.pos = "lt",
-               tl.col = "black",
-               tl.cex = 0.8,
-               addCoefasPercent = TRUE,
-               number.cex=0.8)
+corrplot.mixed(cor(TidyData[,!names(TidyData) %in% c(
+    "Origin","Destination","border",
+    "OriginLanguage", "DestinationLanguage",
+    "OriginLangGroup", "DestinationLangGroup",
+    "OriginColoniser","OriginColonised",
+    "DestinationColoniser","DestinationColonised")]),
+  upper = 'number',
+  lower = "circle",
+  tl.pos = "lt",
+  tl.col = "black",
+  tl.cex = 0.8,
+  addCoefasPercent = TRUE,
+  number.cex=0.8)
 
 
 ## Correlations:
@@ -61,12 +53,16 @@ LR_FullModel <- glm(Visafree ~ avg_distance_km
                     + OriginColoniser
                     + OriginColonised
                     + Originln_GDP
-                    + OriginTransformed_Area
+                    # + OriginTransformed_Area
                     + DestinationLangGroup
                     + DestinationColoniser
                     + DestinationColonised
                     + Destinationln_GDP
-                    + DestinationTransformed_Area,
+                    # + DestinationTransformed_Area
+                    + OriginNonViolence
+                    + OriginTrans_NetMigration
+                    + DestinationNonViolence
+                    + DestinationTrans_NetMigration,
                     # also Transformed_Area or ln_GDP for each country?
                     family = "binomial", data = TidyData)
 summary(LR_FullModel)
@@ -77,17 +73,17 @@ summary(LR_StartModel)
 anova(LR_StartModel, LR_FullModel)
 
 
-# Framåtval
-step(LR_StartModel, 
-     scope = list(lower = LR_StartModel, upper = LR_FullModel), 
-     direction = "forward")
-# Bakåteliminering
-step(LR_FullModel, 
-     direction = "backward")
-# Stegvis regression
-step(LR_StartModel,
-     scope = list(lower = LR_StartModel, upper = LR_FullModel),
-     direction = "both")
+# # Framåtval
+# step(LR_StartModel,
+#      scope = list(lower = LR_StartModel, upper = LR_FullModel),
+#      direction = "forward")
+# # Bakåteliminering
+# step(LR_FullModel,
+#      direction = "backward")
+# # Stegvis regression
+# step(LR_StartModel,
+#      scope = list(lower = LR_StartModel, upper = LR_FullModel),
+#      direction = "both")
 
 
 # Best fit: (same as LR_FullModel)
@@ -96,14 +92,18 @@ LR_Choice <- glm(Visafree ~ DestinationLangGroup
                  + avg_distance_km
                  + OriginLangGroup
                  + OriginColoniser
-                 + OriginTransformed_Area
+                 # + OriginTransformed_Area
                  + Originln_GDP
-                 + DestinationTransformed_Area
+                 # + DestinationTransformed_Area
                  + border
                  + DestinationColonised
                  + reldist_weighted
                  + DestinationColoniser
-                 + OriginColonised,
+                 + OriginColonised
+                 + OriginNonViolence
+                 # + OriginTrans_NetMigration
+                 + DestinationNonViolence
+                 + DestinationTrans_NetMigration,
                  # also Transformed_Area or ln_GDP for each country?
                  family = "binomial", data = TidyData)
 
@@ -166,7 +166,7 @@ TidyData_Reci$Reci_Prediction <- TidyData_Reci$Prediction.x * TidyData_Reci$Pred
 # Classification
 
 # Choose cut-off level (default is same as c above)
-c_reci <- c
+c_reci <- 0.25
 TidyData_Reci$Reci_Classification <- ifelse(TidyData_Reci$Reci_Prediction > c_reci, 1, 0)
 TidyData_Reci$Reci_Classification <- as.factor(TidyData_Reci$Reci_Classification)
 
@@ -204,5 +204,4 @@ rm(LR_StartModel, key.creator)
 #       - GDP
 #       - Area
 #       - "SameLanguage" (till exempel?)
-#     - Also Language_Grouped (perhaps from earlier?)
 

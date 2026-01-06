@@ -1,15 +1,9 @@
-# getwd()
-# setwd("~/GitHub/BachelorThesis")
-# setwd("~/GitHub/BachelorThesis/MoasLabbar")
-# setwd("~/GitHub/BachelorThesis/MODULAR")
+##################################################
+#                                                #
+#                 DataImputation                 #
+#                                                #
+##################################################
 
-# Libraries
-
-library(tidyverse)
-library(mice)
-library(esquisse)
-library(fBasics)
-library(interp)
 
 # ============== - Input Variables - =======================
 
@@ -21,7 +15,7 @@ VertexAttributes_Imp <- VertexAttributes_Trans
 # =========================================================
 # =========================================================
 
-### Due to scewed data transformation of variables were made
+### Due to scewed data, transformation of variables were made
 ### before imputation (vanBuuren, pp. 74-75, 116) - 
 ### 
 ### "Vroomen et al.(2016) investigated imputation of cost data, 
@@ -104,6 +98,8 @@ imp_mice <- mice(VertexAttributes_Imp, m = 5, maxit = 5,
 
 bootmean_ln_GDP <- rowMeans(imp_mice$imp$ln_GDP)
 bootmean_Transformed_Area <- rowMeans(imp_mice$imp$Transformed_Area)
+bootmean_NonViolence <- rowMeans(imp_mice$imp$NonViolence)
+bootmean_Trans_NetMigration <- rowMeans(imp_mice$imp$Trans_NetMigration)
 
 # VertexAttributes_Imp[names(bootmean_ln_GDP),"VertexName"]
 # exp(bootmean_ln_GDP)
@@ -114,6 +110,8 @@ VertexAttributes_Complete <- VertexAttributes_Imp
 
 VertexAttributes_Complete[names(bootmean_ln_GDP),"ln_GDP"] <- bootmean_ln_GDP
 VertexAttributes_Complete[names(bootmean_Transformed_Area),"Transformed_Area"] <- bootmean_Transformed_Area
+VertexAttributes_Complete[names(bootmean_NonViolence),"NonViolence"] <- bootmean_NonViolence
+VertexAttributes_Complete[names(bootmean_Trans_NetMigration),"Trans_NetMigration"] <- bootmean_Trans_NetMigration
 
 
 # ====== - Exploration of complete data  - ================
@@ -129,38 +127,7 @@ summary(VertexAttributes_Complete)
 hist(VerAtt_Vis$ln_GDP)
 hist(VertexAttributes_Complete$ln_GDP)
 # Complete hist DO look a little skewed to the left - But more even distributed!
-
-# # Transform to logarithm and re-visualize
-# VertexAttributes_Complete <- VertexAttributes_Complete %>% 
-#   mutate(ln_GDP = log(GDP))
-# hist(VertexAttributes_Complete$Trans_GDP)
-
-# Formal tests
-pchiTest(VerAtt_Vis$ln_GDP) # - Not normal
-pchiTest(na.exclude(VerAtt_Vis$ln_GDP)) # Still not normal, but closer: P-value 0.04905
-jbTest(na.exclude(VerAtt_Vis$ln_GDP)) # - Normal
-shapiro.test(VerAtt_Vis$ln_GDP) # - Normal
-
-pchiTest(VertexAttributes_Complete$ln_GDP) # - Actually normal! P-value 0.1131 
-jbTest(VertexAttributes_Complete$ln_GDP) # - NOT normal!
-shapiro.test(VertexAttributes_Complete$ln_GDP) # - Barely not normal!
-
-TransTest <- (exp(VertexAttributes_Complete$ln_GDP))^(1/20) # 1/20 - 1/40 ? 
-hist(TransTest, breaks = 10)
-                    # Values for ^(1/20):
-pchiTest(TransTest) # - Normal: P-value 0.07791 
-jbTest(TransTest) # - Normal
-shapiro.test(TransTest) # - Normal: P-value 0.3134
-
-# But this DOES feel a little shady!
-# Let's leave it as ln_GDP for now,
-# but leave code above for future potential needs
-# 
-# QUESTION: Does the variables need to be normal distributed, 
-# except for the imputation process? (Low prio)
-
-rm(TransTest)
-
+# Manually imputed values probably affects the distribution substantially.
 
 # ------------
 # --- Area ---
@@ -170,21 +137,23 @@ hist(VerAtt_Vis$Transformed_Area)
 hist(VertexAttributes_Complete$Transformed_Area)
 # Rather equal
 
-# Formal tests
-pchiTest(VerAtt_Vis$Transformed_Area) # - Not normal
-pchiTest(na.exclude(VerAtt_Vis$Transformed_Area)) # Not adjusted is barely signifcant: P-value 0.05741
-jbTest(na.exclude(VerAtt_Vis$Transformed_Area)) # - Normal
-shapiro.test(VerAtt_Vis$Transformed_Area) # - Not normal
 
-pchiTest(VertexAttributes_Complete$Transformed_Area) # - Normal!
-jbTest(VertexAttributes_Complete$Transformed_Area) # - Normal!
-shapiro.test(VertexAttributes_Complete$Transformed_Area)  # - Not normal (but close)
+# -------------------
+# --- NonViolence ---
+# -------------------
 
+hist(VerAtt_Vis$NonViolence)
+hist(VertexAttributes_Complete$NonViolence)
+# Rather equal
 
-# --- Keep transfomed variables and clean out original ones ---
+# --------------------------
+# --- Trans_NetMigration ---
+# --------------------------
 
-# VertexAttributes_Complete <- VertexAttributes_Complete[,!names(
-#   VertexAttributes_Complete) %in% c("GDP","Area")]
+hist(VerAtt_Vis$Trans_NetMigration)
+hist(VertexAttributes_Complete$Trans_NetMigration)
+# More scewed...
+
 
 # ================================================================
 # --- Create language groups to decrease number of cathegories ---
@@ -206,12 +175,6 @@ VertexAttributes_Complete$LangGroup[!(VertexAttributes_Complete$Language %in% na
 ### Save data
 write.csv(VertexAttributes_Complete,file='VertexAttributes_Complete.csv')
 
-# CSV For DataRAndC_test.R
-# write.csv(VertexAttributes,file='VertexAttributes.csv')
-# write.csv(DyadAttributes,file='DyadAttributes.csv')
-# write.csv(AdjMat,file='AdjMat.csv')
-
-
 
 # ============== - Output Variables - =======================
 
@@ -221,13 +184,13 @@ DyadAttributes <- DyadAttributes_Trans
 
 # Variables cleaning - Comment/Uncomment at will
 rm(empty_mice, VertexAttributes_Imp, bootmean_ln_GDP, bootmean_Transformed_Area,
-   pred, meth)
+   bootmean_NonViolence, bootmean_Trans_NetMigration, pred, meth, CommonLanguages)
 
+save(AdjMat, file = "AdjMat.RData")
+save(VertexAttributes, file = "VertexAttributes.RData")
+save(DyadAttributes, file = "DyadAttributes.RData")
 
 
 # ~=~=~=~=~=~=~=~=~ Unfinished in this script: ~=~=~=~=~=~=~=~=~
 
-# - Source manual Languages? (low prio)
-# - Re-transform variables? Gör man så?? Also: Why? Are there a need for
-#     the variables to be normal distributed, now that the imputation is done?
 # - Kan vi använda norm istället för pmm? Eller norm.boot?
